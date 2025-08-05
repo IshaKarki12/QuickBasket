@@ -1,9 +1,22 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Footer from './components/Footer';
+
+
 function App() {
   return (
-    <div>
-      <h1>Welcome to QuickBasket 🛒</h1>
-      <p>Your one-stop grocery shop!</p>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+       <Footer /> 
+    </Router>
   );
 }
 
