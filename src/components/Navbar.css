@@ -95,3 +95,13 @@
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
+.cart-link {
+  margin-left: 15px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.cart-link:hover {
+  transform: scale(1.1);
+}
+
