@@ -15,37 +15,37 @@ const products = [
     id: 3,
     name: "Carrots",
     price: 2.49,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuJaoNp3zFtkK7y-P5-9FAPOJKdhIHzMBezQ&s"
+    image: "https://i.pinimg.com/736x/21/3f/a4/213fa42e480a261d6329bf91ff4c1105.jpg"
   },
   {
     id: 4,
-    name: "Tomatoes",
-    price: 2.99,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyoQEOYfUwOatZ6_Kh5w3kJ0Rb1Rlt7qP2pA&s"
+    name: "Mozzarella Cheese",
+    price: 3.99,
+    image: "https://i.pinimg.com/1200x/af/8e/74/af8e74be2fec8f5490b69246bedd0e55.jpg"
   },
   {
     id: 5,
-    name: "Broccoli",
+    name: "Asparagus",
     price: 2.89,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7nUeA5t_u-u9BfIvQTTTzUBsLJdID2wC2NQ&s"
+    image: "https://i.pinimg.com/736x/d8/c8/70/d8c870eada99c3d08798496593b6bf22.jpg"
   },
   {
     id: 6,
-    name: "Potatoes",
+    name: "Full Fat Milk",
     price: 1.99,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlUlyMBzqS6zP46fsBOIDoFMjq2l1Kc4EcUg&s"
+    image: "https://i.pinimg.com/736x/6b/18/f1/6b18f1a78dedb6b58296b6843e7e4643.jpg"
   },
   {
     id: 7,
     name: "Onions",
     price: 1.79,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXcc9_PcDWq8_taFVJZ9hKrZ_Y9d-4TGrGUQ&s"
+    image: "https://i.pinimg.com/736x/cc/c4/ba/ccc4ba4324c1b6187ab48d5ca67ab60b.jpg"
   },
   {
     id: 8,
-    name: "Lettuce",
-    price: 1.59,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4J6ZRuXRruuPh-lxMQ2cibSLoM_dIWVLw9w&s"
+    name: "Lay's Chips",
+    price: 1.12,
+    image: "https://i.pinimg.com/736x/4f/d1/f9/4fd1f9b0f28bac4e1d5d2e5e74a156e9.jpg"
   }
 ];
 

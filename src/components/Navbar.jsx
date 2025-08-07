@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import cart from '../assets/add-to-cart.png';
+import user from '../assets/user.png';
 
 
 function Navbar() {
@@ -16,6 +17,9 @@ function Navbar() {
         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
         <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>Contact</Link>
         <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
+         <Link to="/Account" className="icon-link">
+    <img src={user} alt="My Account" style={{ width: '28px', marginRight: '8px' }} />
+    </Link>
         <Link to="/cart" className="cart-link">
     <img 
       src={cart} 

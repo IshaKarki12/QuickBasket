@@ -105,3 +105,17 @@
   transform: scale(1.1);
 }
 
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 15px;
+}
+
+.icon-link img {
+  transition: transform 0.2s ease;
+}
+
+.icon-link:hover img {
+  transform: scale(1.1);
+}
+
