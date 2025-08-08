@@ -1,22 +1,28 @@
-// src/pages/ProductDetail.jsx
-
 import { useParams } from 'react-router-dom';
 import products from '../data/products';
+import './ProductDetail.css';
 
 function ProductDetail() {
   const { id } = useParams();
-  const product = products.find((item) => item.id === parseInt(id));
+  const product = products.find(p => p.id === parseInt(id));
 
-  if (!product) return <div style={{ padding: '40px' }}>Product not found</div>;
+  if (!product) {
+    return <h2>Product not found</h2>;
+  }
 
   return (
-    <div style={{ padding: '40px' }}>
-      <h2>{product.name}</h2>
-      <img src={product.image} alt={product.name} style={{ width: '300px', borderRadius: '12px' }} />
-      <p style={{ fontSize: '1.2rem', marginTop: '20px' }}>Price: ${product.price.toFixed(2)}</p>
-      <button style={{ marginTop: '20px', padding: '10px 20px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '6px' }}>
-        🛒 Add to Cart
-      </button>
+    <div className="product-detail-container">
+      <div className="product-detail-card">
+        <div className="product-detail-image">
+          <img src={product.image} alt={product.name} />
+        </div>
+        <div className="product-detail-info">
+          <h2>{product.name}</h2>
+          <p className="product-detail-desc">{product.description || "No description available."}</p>
+          <p className="product-detail-price"><strong>Price:</strong> ${product.price}</p>
+          <button className="product-detail-btn">Add to Cart 🛒</button>
+        </div>
+      </div>
     </div>
   );
 }

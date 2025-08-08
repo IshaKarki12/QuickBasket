@@ -19,9 +19,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/account" element={<Account />} />
         <Route path="/cart" element={<Cart/>} />
-        
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="*" element={<h2>Page Not Found</h2>} />
+       <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
        <Footer /> 
     </Router>

@@ -3,13 +3,13 @@ const products = [
     id: 1,
     name: "Fresh Apples",
     price: 3.99,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQADSfyi7bPVCr4jLbUNEf4D1wThAr0ilzdA&s"
+    image: "https://i.pinimg.com/1200x/79/7d/c4/797dc4cc32eddce735d27bec4a4a51af.jpg"
   },
   {
     id: 2,
     name: "Bananas",
     price: 1.29,
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc1kkMzu5oZiVRurrj-f1nLnDAUFjHI0j7uQ&s"
+    image: "https://i.pinimg.com/736x/3a/65/64/3a6564379e4d7adfd31c1f7cd6bd3e58.jpg"
   },
   {
     id: 3,
