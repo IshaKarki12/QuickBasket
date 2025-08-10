@@ -43,3 +43,62 @@
   font-size: 1.1rem;
   color: #27ae60;
 }
+
+/* Responsive: tablets and smaller laptops */
+@media (max-width: 900px) {
+  .category-section {
+    padding: 40px 15px;
+  }
+
+  .category-section h2 {
+    font-size: 1.6rem;
+  }
+
+  .category-card {
+    width: 140px;
+    padding: 12px;
+  }
+
+  .category-card img {
+    height: 100px;
+  }
+
+  .category-card h3 {
+    font-size: 1rem;
+  }
+
+  .category-cards {
+    gap: 15px;
+  }
+}
+
+/* Responsive: mobile phones */
+@media (max-width: 480px) {
+  .category-section {
+    padding: 30px 10px;
+  }
+
+  .category-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .category-cards {
+    gap: 12px;
+    justify-content: space-around;
+  }
+
+  .category-card {
+    width: 45%;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .category-card img {
+    height: 90px;
+  }
+
+  .category-card h3 {
+    font-size: 0.95rem;
+  }
+}

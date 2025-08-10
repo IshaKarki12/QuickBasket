@@ -30,10 +30,17 @@ function Footer() {
           <p>Email: support@quickbasket.com</p>
           <p>Phone: +977-9823917146</p>
            <div className="footer-social">
-            <a href="#"><img src={facebookIcon} alt="Facebook" style={{ width: 28, verticalAlign: 'middle' }} /></a>
-            <a href="#"><img src={instagramIcon} alt="Instagram" style={{ width: 28, verticalAlign: 'middle' }} /></a>
-            <a href="#"><img src={twitterIcon} alt="Twitter" style={{ width: 28, verticalAlign: 'middle' }} /></a>
-          </div>
+  <a href="#" aria-label="Facebook" tabIndex="0">
+    <img src={facebookIcon} alt="Facebook" style={{ width: 28, verticalAlign: 'middle' }} />
+  </a>
+  <a href="#" aria-label="Instagram" tabIndex="0">
+    <img src={instagramIcon} alt="Instagram" style={{ width: 28, verticalAlign: 'middle' }} />
+  </a>
+  <a href="#" aria-label="Twitter" tabIndex="0">
+    <img src={twitterIcon} alt="Twitter" style={{ width: 28, verticalAlign: 'middle' }} />
+  </a>
+</div>
+
         </div>
       </div>
       <div className="footer-bottom">

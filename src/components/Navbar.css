@@ -1,3 +1,44 @@
+/* Main Navbar container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: linear-gradient(to right, #ffffff, #f9f9f9);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Left container */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Logo styling */
+.navbar-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2ecc71;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Cart icon style */
+.navbar-cart {
+  font-size: 1.6rem;
+  color: #2ecc71;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.navbar-cart:hover {
+  transform: scale(1.8);
+}
 
 /* Nav links container */
 .navbar-links {
@@ -39,62 +80,7 @@
   color: #2ecc71;
 }
 
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-  }
-
-  .navbar-links {
-    flex-direction: column;
-    gap: 20px;
-    margin-top: 10px;
-  }
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 60px;
-  background: linear-gradient(to right, #ffffff, #f9f9f9);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* New left container to hold cart + logo */
-.navbar-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Cart icon style */
-.navbar-cart {
-  font-size: 1.6rem;
-  color: #2ecc71;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.navbar-cart:hover {
-  transform: scale(1.8);
-}
-
-/* Logo styling */
-.navbar-logo {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2ecc71;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
+/* Icons */
 .cart-link {
   margin-left: 15px;
   display: inline-block;
@@ -117,5 +103,56 @@
 
 .icon-link:hover img {
   transform: scale(1.1);
+}
+
+/* Hamburger menu (mobile only) */
+.hamburger {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #fff;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .navbar {
+    flex-direction: row;
+    align-items: center;
+    padding: 15px 20px;
+  }
+}
+
+
+
+/* Cart icon style */
+.navbar-cart {
+  font-size: 1.6rem;
+  color: #2ecc71;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.navbar-cart:hover {
+  transform: scale(1.8);
 }
 
