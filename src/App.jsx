@@ -6,6 +6,7 @@ import Contact from './pages/Contact';
 import Footer from './components/Footer';
 import Account from './pages/Account';
 import Cart from './pages/Cart';
+import CategoryProducts from './pages/CategoryProducts';
 import ProductDetail from './pages/ProductDetail';
 
 
@@ -14,13 +15,14 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/cart" element={<Cart/>} />
-       <Route path="/product/:id" element={<ProductDetail />} />
-      </Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/about" element={<About />} />
+  <Route path="/contact" element={<Contact />} />
+  <Route path="/account" element={<Account />} />
+  <Route path="/cart" element={<Cart />} />
+  <Route path="/products/:category" element={<CategoryProducts />} />
+  <Route path="/product/:id" element={<ProductDetail />} />
+</Routes>
        <Footer /> 
     </Router>
   );

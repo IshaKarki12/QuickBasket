@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import './CategorySection.css';
 
 const categories = [
@@ -13,10 +14,14 @@ function CategorySection() {
       <h2>Shop by Category</h2>
       <div className="category-cards">
         {categories.map((cat, index) => (
-          <div className="category-card" key={index}>
+          <Link 
+            key={index} 
+            to={`/products/${cat.name.toLowerCase()}`} 
+            className="category-card"
+          >
             <img src={cat.image} alt={cat.name} />
             <h3>{cat.name}</h3>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

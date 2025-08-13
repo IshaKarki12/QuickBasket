@@ -1,13 +1,19 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
+import { useState } from 'react';
 
 function ProductCard({ product }) {
   const { addToCart } = useCart();
+  const [added, setAdded] = useState(false); // track if added
 
-  // Prevent the Link navigation when clicking Add to Cart button
+  // Handle Add to Cart click
   const handleAddToCartClick = (e) => {
     e.preventDefault(); // prevent link navigation
     addToCart(product);
+    setAdded(true);
+
+    // Reset after 2 seconds
+    setTimeout(() => setAdded(false), 3000);
   };
 
   return (
@@ -19,7 +25,12 @@ function ProductCard({ product }) {
         <img src={product.image} alt={product.name} />
         <h3>{product.name}</h3>
         <p>${product.price.toFixed(2)}</p>
-        <button onClick={handleAddToCartClick}>Add to Cart</button>
+        <button 
+          onClick={handleAddToCartClick} 
+          disabled={added} // optional: prevent double click
+        >
+          {added ? "Added! ✅" : "Add to Cart 🛒"}
+        </button>
       </div>
     </Link>
   );

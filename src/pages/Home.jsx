@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import productsData from '../data/products';
+import featuredProducts from '../data/featuredProducts'; // ✅ correct naming
 import ProductCard from '../components/ProductCard';
 import Hero from '../components/Hero';
 import CategorySection from '../components/CategorySection';
@@ -8,7 +8,8 @@ import '../index.css';
 function Home() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredProducts = productsData.filter(product =>
+  // ✅ Filter only from featured products
+  const filteredProducts = featuredProducts.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
