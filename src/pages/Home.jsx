@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import featuredProducts from '../data/featuredProducts'; // ✅ correct naming
+import products from '../data/products'; // ✅ All products
+import featuredProducts from '../data/featuredProducts'; // ✅ For featured section
 import ProductCard from '../components/ProductCard';
 import Hero from '../components/Hero';
 import CategorySection from '../components/CategorySection';
@@ -8,8 +9,8 @@ import '../index.css';
 function Home() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  // ✅ Filter only from featured products
-  const filteredProducts = featuredProducts.filter(product =>
+  // ✅ Filter from all products
+  const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -28,10 +29,11 @@ function Home() {
         />
       </div>
 
+      {/* If search is active, show filtered results, else show featured */}
       <section>
-        <h2 className="section-title">🛍️ Featured Products</h2>
+        <h2 className="section-title">🛍️ {searchTerm ? 'Search Results' : 'Featured Products'}</h2>
         <div className="product-list">
-          {filteredProducts.map(product => (
+          {(searchTerm ? filteredProducts : featuredProducts).map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

@@ -8,6 +8,9 @@ import Account from './pages/Account';
 import Cart from './pages/Cart';
 import CategoryProducts from './pages/CategoryProducts';
 import ProductDetail from './pages/ProductDetail';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import ProductManagement from './pages/ProductManagement';
 
 
 function App() {
@@ -22,6 +25,10 @@ function App() {
   <Route path="/cart" element={<Cart />} />
   <Route path="/products/:category" element={<CategoryProducts />} />
   <Route path="/product/:id" element={<ProductDetail />} />
+    <Route path="/admin/login" element={<AdminLogin />} />
+    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+    <Route path="/admin/products" element={<ProductManagement />} />
+       
 </Routes>
        <Footer /> 
     </Router>

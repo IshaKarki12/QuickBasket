@@ -24,7 +24,9 @@ function ProductCard({ product }) {
       <div className="product-card">
         <img src={product.image} alt={product.name} />
         <h3>{product.name}</h3>
-        <p>${product.price.toFixed(2)}</p>
+        <p className="product-price">${product.price}</p>
+{product.unit && <p className="product-unit">{product.unit}</p>}
+
         <button 
           onClick={handleAddToCartClick} 
           disabled={added} // optional: prevent double click

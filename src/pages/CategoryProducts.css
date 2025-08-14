@@ -114,3 +114,32 @@
   font-size: 1.3rem;
   color: #e74c3c;
 }
+
+.filters-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin: 30px auto;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  padding: 10px 14px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  font-size: 1rem;
+  min-width: 220px;
+}
+
+.filter-select {
+  padding: 10px 14px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+
+
