@@ -8,9 +8,10 @@ import Account from './pages/Account';
 import Cart from './pages/Cart';
 import CategoryProducts from './pages/CategoryProducts';
 import ProductDetail from './pages/ProductDetail';
-import AdminLogin from './pages/AdminLogin';
+import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductManagement from './pages/ProductManagement';
+import Register from './pages/Register';
 
 
 function App() {
@@ -25,9 +26,10 @@ function App() {
   <Route path="/cart" element={<Cart />} />
   <Route path="/products/:category" element={<CategoryProducts />} />
   <Route path="/product/:id" element={<ProductDetail />} />
-    <Route path="/admin/login" element={<AdminLogin />} />
+    <Route path="/login" element={<LoginPage />} />
     <Route path="/admin/dashboard" element={<AdminDashboard />} />
     <Route path="/admin/products" element={<ProductManagement />} />
+  <Route path="/register" element={<Register />} />
        
 </Routes>
        <Footer /> 

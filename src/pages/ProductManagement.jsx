@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../index.css";
+import "./AdminStyles.css"; // new CSS file for admin pages
 
 const initialProducts = [
   { id: 1, name: "Apple", price: 1.2, category: "Fruits" },
@@ -19,73 +19,115 @@ function ProductManagement() {
   const handleAddOrEdit = (e) => {
     e.preventDefault();
     if (editId !== null) {
-      // Edit product
-      setProducts(products.map(p => p.id === editId ? { ...p, ...form, price: parseFloat(form.price) } : p));
+      setProducts(
+        products.map((p) =>
+          p.id === editId ? { ...p, ...form, price: parseFloat(form.price) } : p
+        )
+      );
       setEditId(null);
     } else {
-      // Add new product
-      const newProduct = { id: Date.now(), ...form, price: parseFloat(form.price) };
+      const newProduct = {
+        id: Date.now(),
+        ...form,
+        price: parseFloat(form.price),
+      };
       setProducts([...products, newProduct]);
     }
     setForm({ name: "", price: "", category: "" });
   };
 
   const handleEdit = (product) => {
-    setForm({ name: product.name, price: product.price, category: product.category });
+    setForm({
+      name: product.name,
+      price: product.price,
+      category: product.category,
+    });
     setEditId(product.id);
   };
 
   const handleDelete = (id) => {
-    setProducts(products.filter(p => p.id !== id));
+    setProducts(products.filter((p) => p.id !== id));
   };
 
   return (
-    <div className="product-management-page">
-      <h2 className="section-title">Product Management</h2>
+    <div className="admin-container">
+      <h2 className="admin-title">Product Management</h2>
 
       {/* Form */}
-      <form className="product-form" onSubmit={handleAddOrEdit}>
-        <input 
-          type="text" 
-          name="name" 
-          placeholder="Product Name" 
-          value={form.name} 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="number" 
-          name="price" 
-          placeholder="Price" 
-          value={form.price} 
-          onChange={handleChange} 
-          step="0.01"
-          required 
-        />
-        <input 
-          type="text" 
-          name="category" 
-          placeholder="Category" 
-          value={form.category} 
-          onChange={handleChange} 
-          required 
-        />
-        <button type="submit" className="checkout-btn">{editId ? "Update Product" : "Add Product"}</button>
-      </form>
-
-      {/* Product List */}
-      <div className="products-grid">
-        {products.map(product => (
-          <div key={product.id} className="product-card">
-            <h3>{product.name}</h3>
-            <p>Price: Rs. {product.price}</p>
-            <p>Category: {product.category}</p>
-            <div className="product-buttons">
-              <button className="checkout-btn" onClick={() => handleEdit(product)}>Edit</button>
-              <button className="remove-btn" onClick={() => handleDelete(product.id)}>Delete</button>
-            </div>
+      <div className="admin-card">
+        <form className="admin-form" onSubmit={handleAddOrEdit}>
+          <div>
+            <label>Product Name</label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
           </div>
-        ))}
+          <div>
+            <label>Price</label>
+            <input
+              type="number"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+              step="0.01"
+              required
+            />
+          </div>
+          <div>
+            <label>Category</label>
+            <input
+              type="text"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit" className="btn-primary">
+            {editId ? "Update Product" : "Add Product"}
+          </button>
+        </form>
+      </div>
+
+      {/* Table */}
+      <div className="admin-card">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price (Rs.)</th>
+              <th>Category</th>
+              <th style={{ textAlign: "center" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.price}</td>
+                <td>{product.category}</td>
+                <td className="action-buttons">
+                  <button
+                    className="btn-edit"
+                    onClick={() => handleEdit(product)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
