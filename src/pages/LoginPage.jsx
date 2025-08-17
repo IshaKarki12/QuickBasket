@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
+import axios from "axios";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -8,21 +9,34 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // Hardcoded credentials
-  const adminCredentials = { email: "isha123@gmail.com", password: "isha123" };
-  const customerCredentials = { email: "customer@gmail.com", password: "customer123" };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (email === adminCredentials.email && password === adminCredentials.password) {
-      setError("");
-      navigate("/admin/dashboard");
-    } else if (email === customerCredentials.email && password === customerCredentials.password) {
-      setError("");
-      navigate("/checkout"); // or /profile
-    } else {
-      setError("Invalid email or password");
+    try {
+      const response = await axios.post("http://localhost:5000/api/users/login", {
+        email,
+        password,
+      });
+
+      const user = response.data.user;
+      alert(response.data.message);
+
+      // Redirect based on user email (we will use roles later)
+      if (user.email === "isha123@gmail.com") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/cart"); // customer goes to cart page
+      }
+
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 

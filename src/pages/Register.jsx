@@ -1,27 +1,48 @@
 import React, { useState } from "react";
 import "./Register.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match!");
       return;
     }
-    console.log("Customer Registered:", form);
-    alert("Registration Successful!");
-    setForm({ name: "", email: "", password: "", confirmPassword: "" });
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/users/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
+
+      alert(response.data.message); // Success message
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
+      navigate("/login"); // Redirect to login page after successful registration
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    }
   };
 
   return (
@@ -60,8 +81,20 @@ function Register() {
           onChange={handleChange}
           required
         />
+
+        {error && <p className="error-message">{error}</p>}
+
         <button type="submit" className="register-btn">Register</button>
       </form>
+
+      <div className="register-footer">
+        <p>
+          Already have an account?{" "}
+          <span className="login-link" onClick={() => navigate("/login")}>
+            Login here
+          </span>
+        </p>
+      </div>
     </div>
   );
 }
