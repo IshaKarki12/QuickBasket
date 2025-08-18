@@ -1,20 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "../index.css"; // Make sure the CSS includes the dashboard styles
+import axios from "axios";
+import "../index.css"; 
 
 function AdminDashboard() {
-  // Mock data
-  const stats = {
-    totalProducts: 45,
-    totalOrders: 12,
-    totalRevenue: 2350.75,
-  };
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+  });
+  const [latestOrders, setLatestOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const latestOrders = [
-    { id: 101, customer: "John Doe", total: 120.5, status: "Pending" },
-    { id: 102, customer: "Jane Smith", total: 80.0, status: "Completed" },
-    { id: 103, customer: "Mike Johnson", total: 45.25, status: "Shipped" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch stats
+        const statsRes = await axios.get("http://localhost:5000/api/admin/stats");
+        console.log("Stats response:", statsRes.data); // DEBUG
+        setStats({
+          totalProducts: statsRes.data.totalProducts || 0,
+          totalOrders: statsRes.data.totalOrders || 0,
+          totalRevenue: Number(statsRes.data.totalRevenue) || 0,
+        });
+
+        // Fetch latest orders
+        const ordersRes = await axios.get("http://localhost:5000/api/admin/orders");
+        console.log("Orders response:", ordersRes.data); // DEBUG
+        setLatestOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching admin data:", err);
+        setError("Failed to load admin dashboard data.");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Loading dashboard...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="admin-dashboard-page">
@@ -22,12 +50,18 @@ function AdminDashboard() {
 
       {/* Summary Stats */}
       <div className="dashboard-stats">
-        {Object.entries(stats).map(([key, value]) => (
-          <div className="stat-card" key={key}>
-            <h3>{key.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase())}</h3>
-            <p>{key === "totalRevenue" ? `Rs. ${value.toFixed(2)}` : value}</p>
-          </div>
-        ))}
+        <div className="stat-card">
+          <h3>Total Products</h3>
+          <p>{stats.totalProducts}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Total Orders</h3>
+          <p>{stats.totalOrders}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Total Revenue</h3>
+          <p>Rs. {stats.totalRevenue.toFixed(2)}</p>
+        </div>
       </div>
 
       {/* Latest Orders */}
@@ -44,14 +78,20 @@ function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {latestOrders.map(order => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.customer}</td>
-                  <td>Rs. {order.total.toFixed(2)}</td>
-                  <td>{order.status}</td>
+              {latestOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="4">No recent orders</td>
                 </tr>
-              ))}
+              ) : (
+                latestOrders.map(order => (
+                  <tr key={order._id}>
+                    <td>{order._id}</td>
+                    <td>{order.customerName || "Unknown"}</td>
+                    <td>Rs. {Number(order.total).toFixed(2)}</td>
+                    <td>{order.status}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

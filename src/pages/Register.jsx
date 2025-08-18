@@ -10,6 +10,7 @@ function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "customer", // 👈 default role
   });
   const [error, setError] = useState("");
 
@@ -31,10 +32,11 @@ function Register() {
         name: form.name,
         email: form.email,
         password: form.password,
+        role: form.role, // 👈 send role to backend
       });
 
       alert(response.data.message); // Success message
-      setForm({ name: "", email: "", password: "", confirmPassword: "" });
+      setForm({ name: "", email: "", password: "", confirmPassword: "", role: "customer" });
       navigate("/login"); // Redirect to login page after successful registration
     } catch (err) {
       if (err.response) {

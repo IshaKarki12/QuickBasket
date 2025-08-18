@@ -9,36 +9,37 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    try {
-      const response = await axios.post("http://localhost:5000/api/users/login", {
-        email,
-        password,
-      });
+  try {
+    const response = await axios.post("http://localhost:5000/api/users/login", {
+      email,
+      password,
+    });
 
-      const user = response.data.user;
-      alert(response.data.message);
+    const user = response.data.user;
+    alert(response.data.message);
 
-      // Redirect based on user email (we will use roles later)
-      if (user.email === "isha123@gmail.com") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/cart"); // customer goes to cart page
-      }
-
-      setEmail("");
-      setPassword("");
-    } catch (err) {
-      if (err.response) {
-        setError(err.response.data.message);
-      } else {
-        setError("Login failed. Please try again.");
-      }
+    // ✅ Redirect based on role
+    if (user.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/cart");
     }
-  };
+
+    setEmail("");
+    setPassword("");
+  } catch (err) {
+    if (err.response) {
+      setError(err.response.data.message);
+    } else {
+      setError("Login failed. Please try again.");
+    }
+  }
+};
+
 
   return (
     <div className="login-page">
