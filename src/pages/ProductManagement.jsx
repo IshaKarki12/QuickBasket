@@ -1,136 +1,158 @@
-import React, { useState } from "react";
-import "./AdminStyles.css"; // new CSS file for admin pages
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const initialProducts = [
-  { id: 1, name: "Apple", price: 1.2, category: "Fruits" },
-  { id: 2, name: "Milk", price: 0.85, category: "Dairy" },
-  { id: 3, name: "Bread", price: 1.5, category: "Bakery" },
-];
+function ProductManagementPage() {
+  const [products, setProducts] = useState([]);
+  const [editingProduct, setEditingProduct] = useState(null); // product being edited
+  const [showAddModal, setShowAddModal] = useState(false); // show add modal
+  const [formData, setFormData] = useState({ name: "", price: "", category: "" });
 
-function ProductManagement() {
-  const [products, setProducts] = useState(initialProducts);
-  const [form, setForm] = useState({ name: "", price: "", category: "" });
-  const [editId, setEditId] = useState(null);
+  // Fetch products
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleAddOrEdit = (e) => {
-    e.preventDefault();
-    if (editId !== null) {
-      setProducts(
-        products.map((p) =>
-          p.id === editId ? { ...p, ...form, price: parseFloat(form.price) } : p
-        )
-      );
-      setEditId(null);
-    } else {
-      const newProduct = {
-        id: Date.now(),
-        ...form,
-        price: parseFloat(form.price),
-      };
-      setProducts([...products, newProduct]);
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/admin/products");
+      setProducts(res.data);
+    } catch (err) {
+      console.error("Error fetching products", err);
     }
-    setForm({ name: "", price: "", category: "" });
   };
 
+  // Open edit modal
   const handleEdit = (product) => {
-    setForm({
+    setEditingProduct(product);
+    setFormData({
       name: product.name,
       price: product.price,
       category: product.category,
     });
-    setEditId(product.id);
   };
 
-  const handleDelete = (id) => {
-    setProducts(products.filter((p) => p.id !== id));
+  // Save edited product
+  const handleSave = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/admin/products/${editingProduct._id}`, formData);
+      setEditingProduct(null);
+      fetchProducts();
+    } catch (err) {
+      console.error("Error updating product", err);
+    }
+  };
+
+  // Delete product
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/products/${id}`);
+      fetchProducts();
+    } catch (err) {
+      console.error("Error deleting product", err);
+    }
+  };
+
+  // Open add new modal
+  const handleAddNew = () => {
+    setFormData({ name: "", price: "", category: "" });
+    setShowAddModal(true);
+  };
+
+  // Save new product
+  const handleAddSave = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/admin/products", formData);
+      setShowAddModal(false);
+      fetchProducts();
+    } catch (err) {
+      console.error("Error adding product", err);
+    }
   };
 
   return (
-    <div className="admin-container">
-      <h2 className="admin-title">Product Management</h2>
+    <div>
+      <h2>Product Management</h2>
+      <button onClick={handleAddNew} style={{ marginBottom: "15px" }}>Add New Product</button>
 
-      {/* Form */}
-      <div className="admin-card">
-        <form className="admin-form" onSubmit={handleAddOrEdit}>
-          <div>
-            <label>Product Name</label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>Price</label>
-            <input
-              type="number"
-              name="price"
-              value={form.price}
-              onChange={handleChange}
-              step="0.01"
-              required
-            />
-          </div>
-          <div>
-            <label>Category</label>
-            <input
-              type="text"
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit" className="btn-primary">
-            {editId ? "Update Product" : "Add Product"}
-          </button>
-        </form>
-      </div>
-
-      {/* Table */}
-      <div className="admin-card">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Price (Rs.)</th>
-              <th>Category</th>
-              <th style={{ textAlign: "center" }}>Actions</th>
+      <table border="1" cellPadding="8">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((p) => (
+            <tr key={p._id}>
+              <td>{p.name}</td>
+              <td>${p.price}</td>
+              <td>{p.category}</td>
+              <td>
+                <button onClick={() => handleEdit(p)}>Edit</button>
+                <button onClick={() => handleDelete(p._id)}>Delete</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td>{product.name}</td>
-                <td>{product.price}</td>
-                <td>{product.category}</td>
-                <td className="action-buttons">
-                  <button
-                    className="btn-edit"
-                    onClick={() => handleEdit(product)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Edit Modal */}
+      {editingProduct && (
+        <div style={modalStyle}>
+          <div style={modalContentStyle}>
+            <h3>Edit Product</h3>
+            <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+            <br />
+            <input type="number" placeholder="Price" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} />
+            <br />
+            <input type="text" placeholder="Category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+            <br />
+            <button onClick={handleSave}>Save</button>
+            <button onClick={() => setEditingProduct(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Modal */}
+      {showAddModal && (
+        <div style={modalStyle}>
+          <div style={modalContentStyle}>
+            <h3>Add New Product</h3>
+            <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+            <br />
+            <input type="number" placeholder="Price" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} />
+            <br />
+            <input type="text" placeholder="Category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+            <br />
+            <button onClick={handleAddSave}>Add Product</button>
+            <button onClick={() => setShowAddModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-export default ProductManagement;
+// Modal styles
+const modalStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  background: "rgba(0,0,0,0.5)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const modalContentStyle = {
+  background: "#fff",
+  padding: "20px",
+  borderRadius: "8px",
+  width: "400px",
+};
+
+export default ProductManagementPage;

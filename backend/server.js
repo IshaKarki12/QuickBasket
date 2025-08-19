@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv"; 
 import userRoutes from "./routes/userRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import adminProductRoutes from "./routes/adminProductRoutes.js";
 
 // Load environment variables from .env
 dotenv.config();
@@ -25,6 +27,8 @@ mongoose.connect(mongoURI, {
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/admin/products", adminProductRoutes);
 
 // Test route
 app.get("/", (req, res) => {
