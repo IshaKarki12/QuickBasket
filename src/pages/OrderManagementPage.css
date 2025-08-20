@@ -1,0 +1,15 @@
+.order-management-container {
+  padding: 20px;
+}
+
+.order-management-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-management-container th,
+.order-management-container td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}

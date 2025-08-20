@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductManagement from './pages/ProductManagement';
 import Register from './pages/Register';
+import OrderManagementPage from './pages/OrderManagementPage';
 
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
     <Route path="/admin/dashboard" element={<AdminDashboard />} />
     <Route path="/admin/products" element={<ProductManagement />} />
   <Route path="/register" element={<Register />} />
-       
+  <Route path="/admin/orders" element={<OrderManagementPage />} />  
 </Routes>
        <Footer /> 
     </Router>
