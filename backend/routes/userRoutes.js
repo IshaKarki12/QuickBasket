@@ -1,56 +1,70 @@
 import express from "express";
 import User from "../models/User.js";
+import { protect } from "../middleware/authMiddleware.js"; // optional for future use
 
 const router = express.Router();
 
-// Register customer
+// @desc    Register a new user
+// @route   POST /api/users/register
 router.post("/register", async (req, res) => {
+  const { name, email, password, role } = req.body;
+
   try {
-    const { name, email, password } = req.body;
-    
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-    // By default, role = "customer"
-    const newUser = new User({ name, email, password, role: "customer" });
-    await newUser.save();
+    // Create user
+    const user = await User.create({ name, email, password, role });
 
-    res.status(201).json({ 
-      message: "User registered successfully", 
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role, // ✅ send role
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: user.generateToken(),
+      });
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
+    }
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
-// Login (customer/admin)
+// @desc    Login a user
+// @route   POST /api/users/login
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-    
+    // Find user
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid email or password" });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
+    // Check password
     const isMatch = await user.matchPassword(password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-    res.status(200).json({ 
-      message: "Login successful", 
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role, // ✅ send role
-      }
+    // Return user info + token
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: user.generateToken(),
     });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 

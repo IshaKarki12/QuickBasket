@@ -1,0 +1,43 @@
+/* Account.css */
+.account-page {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9; /* light background */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-page h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.account-page p {
+  font-size: 18px;
+  margin: 12px 0;
+  color: #555;
+}
+
+.account-page p strong {
+  color: #333;
+}
+
+/* Optional: mobile responsiveness */
+@media (max-width: 600px) {
+  .account-page {
+    padding: 15px;
+    margin: 20px;
+  }
+
+  .account-page h2 {
+    font-size: 24px;
+  }
+
+  .account-page p {
+    font-size: 16px;
+  }
+}

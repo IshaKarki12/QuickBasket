@@ -1,7 +1,8 @@
+// frontend/src/pages/Register.jsx
 import React, { useState } from "react";
-import "./Register.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./Register.css";
 
 function Register() {
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "customer", // 👈 default role
   });
   const [error, setError] = useState("");
 
@@ -32,12 +32,12 @@ function Register() {
         name: form.name,
         email: form.email,
         password: form.password,
-        role: form.role, // 👈 send role to backend
       });
 
-      alert(response.data.message); // Success message
-      setForm({ name: "", email: "", password: "", confirmPassword: "", role: "customer" });
-      navigate("/login"); // Redirect to login page after successful registration
+      alert("Registration successful! Please login."); // Notify user
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
+
+      navigate("/login"); // Redirect to login page
     } catch (err) {
       if (err.response) {
         setError(err.response.data.message);

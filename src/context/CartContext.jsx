@@ -1,52 +1,98 @@
+// frontend/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./authContext.jsx";
+import axios from "axios";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  // Load cart from localStorage or start with empty array
-  const [cart, setCart] = useState(() => {
-    const storedCart = localStorage.getItem("quickbasket_cart");
-    return storedCart ? JSON.parse(storedCart) : [];
-  });
+  const { user, token } = useAuth(); // get logged-in user
+  const [cart, setCart] = useState([]);
 
-  // Save cart to localStorage whenever it changes
+  // Fetch cart from backend when user logs in
   useEffect(() => {
-    localStorage.setItem("quickbasket_cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!user || !token) {
+      setCart([]);
+      return;
+    }
 
-  // Add product to cart
-  const addToCart = (product) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+    const fetchCart = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/cart", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCart(res.data.cart || []);
+      } catch (error) {
+        console.error("Failed to fetch cart:", error.response?.data || error.message);
       }
-      return [...prevCart, { ...product, quantity: 1 }];
-    });
+    };
+
+    fetchCart();
+  }, [user, token]);
+
+  // Sync cart with backend
+  const syncCart = async (updatedCart) => {
+    if (!user || !token) return;
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/cart",
+        { cart: updatedCart },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Cart synced:", res.data.cart);
+    } catch (error) {
+      console.error("Failed to update cart:", error.response?.data || error.message);
+    }
   };
 
-  // Remove product from cart
-  const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  const addToCart = (product) => {
+    if (!user) return alert("Please login first");
+    if (!product.id) return console.error("Product missing id:", product);
+
+    const existingItem = cart.find((item) => item.productId === product.id);
+    let updatedCart;
+    if (existingItem) {
+      updatedCart = cart.map((item) =>
+        item.productId === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+    } else {
+      updatedCart = [
+        ...cart,
+        {
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: 1,
+          image: product.image || "",
+        },
+      ];
+    }
+
+    setCart(updatedCart);
+    syncCart(updatedCart);
   };
 
-  // Update quantity of a product in cart
-  const updateQuantity = (id, quantity) => {
-    if (quantity <= 0) return; // prevent invalid quantity
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
+  const removeFromCart = (productId) => {
+    const updatedCart = cart.filter((item) => item.productId !== productId);
+    setCart(updatedCart);
+    syncCart(updatedCart);
+  };
+
+  const updateQuantity = (productId, quantity) => {
+    if (quantity <= 0) return;
+    const updatedCart = cart.map((item) =>
+      item.productId === productId ? { ...item, quantity } : item
     );
+    setCart(updatedCart);
+    syncCart(updatedCart);
   };
 
-  // Clear all items from cart
   const clearCart = () => {
     setCart([]);
+    syncCart([]);
   };
 
   return (
@@ -58,7 +104,4 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the CartContext easily
-export const useCart = () => {
-  return useContext(CartContext);
-};
+export const useCart = () => useContext(CartContext);

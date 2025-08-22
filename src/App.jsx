@@ -1,3 +1,4 @@
+// frontend/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -13,28 +14,33 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProductManagement from './pages/ProductManagement';
 import Register from './pages/Register';
 import OrderManagementPage from './pages/OrderManagementPage';
-
+import { AuthProvider } from './context/authContext.jsx';
+import { CartProvider } from './context/CartContext.jsx';
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/about" element={<About />} />
-  <Route path="/contact" element={<Contact />} />
-  <Route path="/account" element={<Account />} />
-  <Route path="/cart" element={<Cart />} />
-  <Route path="/products/:category" element={<CategoryProducts />} />
-  <Route path="/product/:id" element={<ProductDetail />} />
-    <Route path="/login" element={<LoginPage />} />
-    <Route path="/admin/dashboard" element={<AdminDashboard />} />
-    <Route path="/admin/products" element={<ProductManagement />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/admin/orders" element={<OrderManagementPage />} />  
-</Routes>
-       <Footer /> 
-    </Router>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/products/:category" element={<CategoryProducts />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<ProductManagement />} />
+            <Route path="/admin/orders" element={<OrderManagementPage />} />
+          </Routes>
+          <Footer />
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
