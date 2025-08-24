@@ -4,12 +4,17 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const storedUser = JSON.parse(localStorage.getItem("user")) || null;
-  const storedToken = localStorage.getItem("token") || "";
+  // Load from localStorage (if available)
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  const [user, setUser] = useState(storedUser);
-  const [token, setToken] = useState(storedToken);
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || "";
+  });
 
+  // Keep token in localStorage
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -18,6 +23,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
+  // Keep user in localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -26,14 +32,20 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = (userData, token) => {
+  // Login: save user + token
+  const login = (userData, jwtToken) => {
     setUser(userData);
-    setToken(token);
+    setToken(jwtToken);
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", jwtToken);
   };
 
+  // Logout: clear everything
   const logout = () => {
     setUser(null);
     setToken("");
+
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
