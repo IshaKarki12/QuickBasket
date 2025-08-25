@@ -1,7 +1,7 @@
-// pages/Cart.jsx
 import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
+import Spinner from "../components/Spinner"; 
 import "./Cart.css";
 
 function Cart() {
@@ -10,7 +10,8 @@ function Cart() {
 
   // Wait until cart is loaded from backend
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
+    setTimeout(() => setLoading(false), 800); // small delay to show spinner
   }, [cart]);
 
   // Calculate total price safely
@@ -20,7 +21,7 @@ function Cart() {
   );
 
   if (loading) {
-    return <p>Loading cart...</p>;
+    return <Spinner />;
   }
 
   return (

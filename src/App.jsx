@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import OrderManagementPage from './pages/OrderManagementPage';
 import { AuthProvider } from './context/authContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
+import ScrollToTopButton from './components/ScrollToTopButton';
 
 function App() {
   return (
@@ -36,7 +37,9 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<ProductManagement />} />
             <Route path="/admin/orders" element={<OrderManagementPage />} />
+    
           </Routes>
+          <ScrollToTopButton />
           <Footer />
         </Router>
       </CartProvider>

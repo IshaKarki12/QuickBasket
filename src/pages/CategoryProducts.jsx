@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import productsData from "../data/products";
 import ProductCard from "../components/ProductCard";
+import Spinner from "../components/Spinner"; 
 import './CategoryProducts.css';
 
 function CategoryProducts() {
@@ -10,25 +11,39 @@ function CategoryProducts() {
   // State for filters
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Filter products in this category
-  let filteredProducts = productsData.filter(
-    product => product.category.toLowerCase() === category.toLowerCase()
-  );
+  // Filter products in this category & apply search/sort
+  useEffect(() => {
+    setLoading(true);
 
-  // Search filter
-  filteredProducts = filteredProducts.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    let filtered = productsData.filter(
+      product => product.category.toLowerCase() === category.toLowerCase()
+    );
 
-  // Sorting
-  if (sortOrder === "low-high") {
-    filteredProducts.sort((a, b) => a.price - b.price);
-  } else if (sortOrder === "high-low") {
-    filteredProducts.sort((a, b) => b.price - a.price);
-  } else if (sortOrder === "name-az") {
-    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
-  }
+    // Search filter
+    filtered = filtered.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Sorting
+    if (sortOrder === "low-high") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortOrder === "high-low") {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortOrder === "name-az") {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    // simulate loading
+    setTimeout(() => {
+      setFilteredProducts(filtered);
+      setLoading(false);
+    }, 800); // 0.5s delay
+  }, [category, searchTerm, sortOrder]);
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="category-products-page">
