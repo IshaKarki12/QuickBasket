@@ -1,24 +1,42 @@
-import { useParams } from 'react-router-dom';
-import products from '../data/products';
-import './ProductDetail.css';
-import { useCart } from '../context/CartContext';
-import { useState } from 'react';
+import { useParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { useState, useEffect } from "react";
+import Spinner from "../components/Spinner";
+import "./ProductDetail.css";
 
 function ProductDetail() {
   const { id } = useParams();
-  const product = products.find(p => p.id === parseInt(id));
   const { addToCart } = useCart();
-  const [added, setAdded] = useState(false); // track if product was added
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [added, setAdded] = useState(false);
 
-  if (!product) {
-    return <h2>Product not found</h2>;
-  }
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const data = await res.json();
+        setProduct(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  if (loading) return <Spinner />;
+  if (!product) return <h2>Product not found</h2>;
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addToCart({
+      productId: product._id, // ✅ Use MongoDB _id
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+    });
     setAdded(true);
-
-    // Reset button text after 2 seconds
     setTimeout(() => setAdded(false), 3000);
   };
 
@@ -26,20 +44,18 @@ function ProductDetail() {
     <div className="product-detail-container">
       <div className="product-detail-card">
         <div className="product-detail-image">
-          <img src={product.image} alt={product.name} />
+          <img src={product.imageUrl || "/default.jpg"} alt={product.name} />
         </div>
         <div className="product-detail-info">
           <h2>{product.name}</h2>
-          <p className="product-detail-desc">
-            {product.description || "No description available."}
-          </p>
+          <p className="product-detail-desc">{product.description || "No description."}</p>
           <p className="product-detail-price">
-            <strong>Price:</strong> ${product.price}
+            <strong>Price:</strong> Rs. {product.price}
           </p>
-          <button 
+          <button
             className="product-detail-btn"
             onClick={handleAddToCart}
-            disabled={added} // optional: prevent double-click while added
+            disabled={added}
           >
             {added ? "Added! ✅" : "Add to Cart 🛒"}
           </button>

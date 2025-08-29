@@ -1,18 +1,16 @@
+// frontend/src/pages/Cart.jsx
 import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/authContext";
 import { Link } from "react-router-dom";
-import Spinner from "../components/Spinner"; 
+import axios from "axios";
+import Spinner from "../components/Spinner";
 import "./Cart.css";
 
 function Cart() {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
-  const [loading, setLoading] = useState(true);
-
-  // Wait until cart is loaded from backend
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 800); // small delay to show spinner
-  }, [cart]);
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   // Calculate total price safely
   const totalPrice = cart.reduce(
@@ -20,9 +18,36 @@ function Cart() {
     0
   );
 
-  if (loading) {
-    return <Spinner />;
-  }
+  const handleCheckout = async () => {
+    if (!user) {
+      alert("Please login first!");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const orderData = {
+        userId: user._id, // MongoDB user ID
+        products: cart.map(item => ({
+          product: item.productId, // MongoDB product ID
+          quantity: item.quantity,
+        })),
+      };
+
+      const res = await axios.post("http://localhost:5000/api/orders", orderData);
+      console.log("Order success:", res.data);
+      alert("Order placed successfully!");
+      clearCart();
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("Something went wrong during checkout.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="cart-container">
@@ -51,7 +76,7 @@ function Cart() {
               {cart.map((item) => (
                 <tr key={item.productId}>
                   <td>{item.name}</td>
-                  <td>${item.price.toFixed(2)}</td>
+                  <td>Rs. {item.price.toFixed(2)}</td>
                   <td>
                     <input
                       type="number"
@@ -63,7 +88,7 @@ function Cart() {
                       className="quantity-input"
                     />
                   </td>
-                  <td>${(item.price * item.quantity).toFixed(2)}</td>
+                  <td>Rs. {(item.price * item.quantity).toFixed(2)}</td>
                   <td>
                     <button
                       className="remove-btn"
@@ -78,11 +103,13 @@ function Cart() {
           </table>
 
           <div className="cart-summary">
-            <h3>Total: ${totalPrice.toFixed(2)}</h3>
+            <h3>Total: Rs. {totalPrice.toFixed(2)}</h3>
             <button className="clear-btn" onClick={clearCart}>
               Clear Cart
             </button>
-            <button className="checkout-btn">Proceed to Checkout</button>
+            <button className="checkout-btn" onClick={handleCheckout}>
+              Proceed to Checkout
+            </button>
           </div>
         </>
       )}
