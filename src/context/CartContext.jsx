@@ -6,10 +6,10 @@ import axios from "axios";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const { user, token } = useAuth(); // get logged-in user
+  const { user, token } = useAuth();
   const [cart, setCart] = useState([]);
 
-  // Fetch cart from backend when user logs in
+  // Fetch cart from backend
   useEffect(() => {
     if (!user || !token) {
       setCart([]);
@@ -35,12 +35,11 @@ export const CartProvider = ({ children }) => {
     if (!user || !token) return;
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/cart",
         { cart: updatedCart },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log("Cart synced:", res.data.cart);
     } catch (error) {
       console.error("Failed to update cart:", error.response?.data || error.message);
     }
@@ -48,13 +47,14 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     if (!user) return alert("Please login first");
-    if (!product.id) return console.error("Product missing id:", product);
+    if (!product._id) return console.error("Product missing _id:", product);
 
-    const existingItem = cart.find((item) => item.productId === product.id);
+    const existingItem = cart.find((item) => item.productId === product._id);
+
     let updatedCart;
     if (existingItem) {
       updatedCart = cart.map((item) =>
-        item.productId === product.id
+        item.productId === product._id
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
@@ -62,11 +62,11 @@ export const CartProvider = ({ children }) => {
       updatedCart = [
         ...cart,
         {
-          productId: product.id,
+          productId: product._id,
           name: product.name,
           price: product.price,
           quantity: 1,
-          image: product.image || "",
+          image: product.imageUrl || product.image || "",
         },
       ];
     }

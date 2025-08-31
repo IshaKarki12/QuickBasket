@@ -1,8 +1,10 @@
+// frontend/pages/ProductDetail.jsx
 import { useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useState, useEffect } from "react";
 import Spinner from "../components/Spinner";
 import "./ProductDetail.css";
+import axios from "axios";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -14,9 +16,8 @@ function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`);
-        const data = await res.json();
-        setProduct(data);
+        const res = await axios.get(`http://localhost:5000/api/products/${id}`);
+        setProduct(res.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -30,12 +31,7 @@ function ProductDetail() {
   if (!product) return <h2>Product not found</h2>;
 
   const handleAddToCart = () => {
-    addToCart({
-      productId: product._id, // ✅ Use MongoDB _id
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-    });
+    addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 3000);
   };

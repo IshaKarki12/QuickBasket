@@ -1,10 +1,10 @@
-// frontend/src/pages/Cart.jsx
-import React, { useEffect, useState } from "react";
+// frontend/pages/Cart.jsx
+import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/authContext";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import Spinner from "../components/Spinner";
+import { Link } from "react-router-dom";
 import "./Cart.css";
 
 function Cart() {
@@ -12,31 +12,18 @@ function Cart() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // Calculate total price safely
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + (item.price || 0) * (item.quantity || 0),
-    0
-  );
+  const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
-    if (!user) {
-      alert("Please login first!");
-      return;
-    }
+    if (!user) return alert("Please login first");
 
     setLoading(true);
-
     try {
       const orderData = {
-        userId: user._id, // MongoDB user ID
-        products: cart.map(item => ({
-          product: item.productId, // MongoDB product ID
-          quantity: item.quantity,
-        })),
+        userId: user._id,
+        products: cart.map(item => ({ product: item.productId, quantity: item.quantity })),
       };
-
-      const res = await axios.post("http://localhost:5000/api/orders", orderData);
-      console.log("Order success:", res.data);
+      await axios.post("http://localhost:5000/api/orders", orderData);
       alert("Order placed successfully!");
       clearCart();
     } catch (err) {
@@ -52,13 +39,10 @@ function Cart() {
   return (
     <div className="cart-container">
       <h2>Your Cart</h2>
-
       {cart.length === 0 ? (
         <div className="empty-cart">
           <p>Your cart is empty 😢</p>
-          <Link to="/" className="shop-now-btn">
-            Shop Now
-          </Link>
+          <Link to="/">Shop Now</Link>
         </div>
       ) : (
         <>
@@ -67,50 +51,35 @@ function Cart() {
               <tr>
                 <th>Product</th>
                 <th>Price</th>
-                <th>Quantity</th>
+                <th>Qty</th>
                 <th>Subtotal</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => (
+              {cart.map(item => (
                 <tr key={item.productId}>
                   <td>{item.name}</td>
-                  <td>Rs. {item.price.toFixed(2)}</td>
+                  <td>Rs. {item.price}</td>
                   <td>
                     <input
                       type="number"
-                      value={item.quantity}
                       min="1"
-                      onChange={(e) =>
-                        updateQuantity(item.productId, parseInt(e.target.value))
-                      }
-                      className="quantity-input"
+                      value={item.quantity}
+                      onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value))}
                     />
                   </td>
-                  <td>Rs. {(item.price * item.quantity).toFixed(2)}</td>
+                  <td>Rs. {item.price * item.quantity}</td>
                   <td>
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeFromCart(item.productId)}
-                    >
-                      Remove
-                    </button>
+                    <button onClick={() => removeFromCart(item.productId)}>Remove</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          <div className="cart-summary">
-            <h3>Total: Rs. {totalPrice.toFixed(2)}</h3>
-            <button className="clear-btn" onClick={clearCart}>
-              Clear Cart
-            </button>
-            <button className="checkout-btn" onClick={handleCheckout}>
-              Proceed to Checkout
-            </button>
-          </div>
+          <h3>Total: Rs. {totalPrice}</h3>
+          <button onClick={handleCheckout}>Proceed to Checkout</button>
+          <button onClick={clearCart}>Clear Cart</button>
         </>
       )}
     </div>
