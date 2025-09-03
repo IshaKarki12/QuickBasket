@@ -1,7 +1,8 @@
+// frontend/src/pages/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import "../index.css"; 
+import "./AdminDashboard.css";
 
 function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -14,42 +15,38 @@ function AdminDashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDashboardData = async () => {
       try {
-        // Fetch stats
+        setLoading(true);
         const statsRes = await axios.get("http://localhost:5000/api/admin/stats");
-        console.log("Stats response:", statsRes.data); // DEBUG
         setStats({
           totalProducts: statsRes.data.totalProducts || 0,
           totalOrders: statsRes.data.totalOrders || 0,
           totalRevenue: Number(statsRes.data.totalRevenue) || 0,
         });
 
-        // Fetch latest orders
         const ordersRes = await axios.get("http://localhost:5000/api/admin/orders");
-        console.log("Orders response:", ordersRes.data); // DEBUG
         setLatestOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
-
-        setLoading(false);
       } catch (err) {
-        console.error("Error fetching admin data:", err);
-        setError("Failed to load admin dashboard data.");
+        console.error(err);
+        setError("Failed to load dashboard data.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchDashboardData();
   }, []);
 
-  if (loading) return <p>Loading dashboard...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="loading-text">Loading dashboard...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
-    <div className="admin-dashboard-page">
-      <h2 className="section-title">Admin Dashboard</h2>
+    <div className="admin-dashboard-container">
+      <h1 className="dashboard-title">Admin Dashboard</h1>
 
-      {/* Summary Stats */}
-      <div className="dashboard-stats">
+      {/* Stats Cards */}
+      <div className="stats-cards">
         <div className="stat-card">
           <h3>Total Products</h3>
           <p>{stats.totalProducts}</p>
@@ -65,44 +62,51 @@ function AdminDashboard() {
       </div>
 
       {/* Latest Orders */}
-      <div className="latest-orders">
-        <h3>Latest Orders</h3>
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {latestOrders.length === 0 ? (
+      <div className="latest-orders-section">
+        <h2>Latest Orders</h2>
+        {latestOrders.length === 0 ? (
+          <p>No recent orders.</p>
+        ) : (
+          <div className="table-wrapper">
+            <table className="orders-table">
+              <thead>
                 <tr>
-                  <td colSpan="4">No recent orders</td>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Status</th>
                 </tr>
-              ) : (
-                latestOrders.map(order => (
+              </thead>
+              <tbody>
+                {latestOrders.map(order => (
                   <tr key={order._id}>
                     <td>{order._id}</td>
                     <td>{order.customerName || "Unknown"}</td>
                     <td>Rs. {Number(order.total).toFixed(2)}</td>
                     <td>{order.status}</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      {/* Navigation */}
-      <div className="dashboard-actions">
-        <Link to="/admin/products">
-          <button className="checkout-btn">Go to Product Management</button>
-        </Link>
-      </div>
+    {/* Navigation Buttons */}
+<div className="dashboard-actions">
+  <Link to="/admin/products">
+    <button className="products-btn">Manage Products</button>
+  </Link>
+
+  <Link to="/admin/orders">
+    <button className="orders-btn">Manage Orders</button>
+  </Link>
+
+  <Link to="/admin/users">
+    <button className="users-btn">Manage Users</button>
+  </Link>
+</div>
+
     </div>
   );
 }
