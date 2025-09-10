@@ -1,24 +1,32 @@
 import express from "express";
 import Order from "../models/Order.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Get all orders (Admin)
-router.get("/", async (req, res) => {
+// @route   GET /api/admin/orders
+// @desc    Get all orders (Admin only)
+router.get("/", protect, admin, async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("user", "name email")
-      .populate("products.product", "name price imageUrl"); // correct path
+      .populate("user", "name email") // ✅ include customer info
+      .populate("products.product", "name price"); // ✅ include product info
+
     res.json(orders);
   } catch (err) {
+    console.error("Admin GET orders error:", err);
     res.status(500).json({ message: "Error fetching orders" });
   }
 });
 
-// Update order status
-router.put("/:id", async (req, res) => {
+// @route   PUT /api/admin/orders/:id
+// @desc    Update order status (Admin only)
+router.put("/:id", protect, admin, async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id)
+      .populate("user", "name email") // ✅ ensure response includes user
+      .populate("products.product", "name price"); // ✅ ensure response includes product
+
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     order.status = req.body.status || order.status;
@@ -26,6 +34,7 @@ router.put("/:id", async (req, res) => {
 
     res.json(updatedOrder);
   } catch (err) {
+    console.error("Admin UPDATE order error:", err);
     res.status(500).json({ message: "Error updating order status" });
   }
 });

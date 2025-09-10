@@ -1,4 +1,3 @@
-// frontend/src/pages/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -18,15 +17,24 @@ function AdminDashboard() {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const statsRes = await axios.get("http://localhost:5000/api/admin/stats");
+        const statsRes = await axios.get("http://localhost:5000/api/admin/stats", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
         setStats({
           totalProducts: statsRes.data.totalProducts || 0,
           totalOrders: statsRes.data.totalOrders || 0,
           totalRevenue: Number(statsRes.data.totalRevenue) || 0,
         });
 
-        const ordersRes = await axios.get("http://localhost:5000/api/admin/orders");
-        setLatestOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
+        const ordersRes = await axios.get("http://localhost:5000/api/admin/orders", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+
+        // show only 5 most recent orders
+        const sortedOrders = Array.isArray(ordersRes.data)
+          ? ordersRes.data.slice(0, 5)
+          : [];
+        setLatestOrders(sortedOrders);
       } catch (err) {
         console.error(err);
         setError("Failed to load dashboard data.");
@@ -37,6 +45,24 @@ function AdminDashboard() {
 
     fetchDashboardData();
   }, []);
+
+  // ✅ update order status
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const { data } = await axios.put(
+        `http://localhost:5000/api/admin/orders/${id}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      setLatestOrders((prev) =>
+        prev.map((order) =>
+          order._id === id ? { ...order, status: data.status } : order
+        )
+      );
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
+  };
 
   if (loading) return <p className="loading-text">Loading dashboard...</p>;
   if (error) return <p className="error-text">{error}</p>;
@@ -75,15 +101,31 @@ function AdminDashboard() {
                   <th>Customer</th>
                   <th>Total</th>
                   <th>Status</th>
+                  <th>Update</th>
                 </tr>
               </thead>
               <tbody>
-                {latestOrders.map(order => (
+                {latestOrders.map((order) => (
                   <tr key={order._id}>
                     <td>{order._id}</td>
-                    <td>{order.customerName || "Unknown"}</td>
+                    <td>
+                      {order.user
+                        ? order.user.name || order.user.email
+                        : "Unknown"}
+                    </td>
                     <td>Rs. {Number(order.total).toFixed(2)}</td>
                     <td>{order.status}</td>
+                    <td>
+                      <select
+                        value={order.status}
+                        onChange={(e) => updateStatus(order._id, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -92,21 +134,20 @@ function AdminDashboard() {
         )}
       </div>
 
-    {/* Navigation Buttons */}
-<div className="dashboard-actions">
-  <Link to="/admin/products">
-    <button className="products-btn">Manage Products</button>
-  </Link>
+      {/* Navigation Buttons */}
+      <div className="dashboard-actions">
+        <Link to="/admin/products">
+          <button className="products-btn">Manage Products</button>
+        </Link>
 
-  <Link to="/admin/orders">
-    <button className="orders-btn">Manage Orders</button>
-  </Link>
+        <Link to="/admin/orders">
+          <button className="orders-btn">Manage Orders</button>
+        </Link>
 
-  <Link to="/admin/users">
-    <button className="users-btn">Manage Users</button>
-  </Link>
-</div>
-
+        <Link to="/admin/users">
+          <button className="users-btn">Manage Users</button>
+        </Link>
+      </div>
     </div>
   );
 }
