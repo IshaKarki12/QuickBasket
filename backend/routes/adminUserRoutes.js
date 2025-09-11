@@ -1,41 +1,18 @@
+// backend/routes/adminUserRoutes.js
 import express from "express";
-import Order from "../models/Order.js";
+import User from "../models/User.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// @route   GET /api/admin/orders
-// @desc    Get all orders (Admin only)
+// GET all users (Admin only)
 router.get("/", protect, admin, async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate({ path: "user", model: "User", select: "name email" }) // force populate user
-      .populate({ path: "products.product", model: "Product", select: "name price" });
-
-    console.log("Orders fetched:", JSON.stringify(orders, null, 2)); // debug
-    res.json(orders);
+    const users = await User.find({}, "name email isAdmin"); 
+    res.json(users);
   } catch (err) {
-    console.error("Admin GET orders error:", err);
-    res.status(500).json({ message: "Error fetching orders" });
-  }
-});
-
-// @route   PUT /api/admin/orders/:id
-// @desc    Update order status (Admin only)
-router.put("/:id", protect, admin, async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id)
-      .populate({ path: "user", model: "User", select: "name email" });
-
-    if (!order) return res.status(404).json({ message: "Order not found" });
-
-    order.status = req.body.status || order.status;
-    const updatedOrder = await order.save();
-
-    res.json(updatedOrder);
-  } catch (err) {
-    console.error("Admin UPDATE order error:", err);
-    res.status(500).json({ message: "Error updating order status" });
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Error fetching users" });
   }
 });
 

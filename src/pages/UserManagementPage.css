@@ -1,0 +1,83 @@
+.user-management-container {
+  padding: 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.user-management-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Table Styles */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.user-table th,
+.user-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eaeaea;
+  text-align: left;
+}
+
+.user-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #444;
+}
+
+.user-table tr:hover {
+  background: #f9f9f9;
+}
+
+/* Buttons */
+.user-actions button {
+  margin: 0 5px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.user-actions .make-admin-btn {
+  background: #007bff;
+  color: #fff;
+}
+
+.user-actions .make-admin-btn:hover {
+  background: #0056b3;
+}
+
+.user-actions .delete-btn {
+  background: #dc3545;
+  color: #fff;
+}
+
+.user-actions .delete-btn:hover {
+  background: #b52a37;
+}
+
+/* Loading & Error */
+.loading-text,
+.error-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.error-text {
+  color: red;
+  font-weight: 600;
+}
