@@ -64,7 +64,6 @@ function UserManagementPage() {
               <th>User ID</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Role</th>
               <th>Update Role</th>
               <th>Delete</th>
             </tr>
@@ -75,10 +74,9 @@ function UserManagementPage() {
                 <td>{user._id}</td>
                 <td>{user.name || "N/A"}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td>
                 <td>
                   <select
-                    value={user.role}
+                    value={user.role || "user"} // ✅ fallback to "user" if missing
                     onChange={(e) => updateRole(user._id, e.target.value)}
                   >
                     <option value="user">User</option>
