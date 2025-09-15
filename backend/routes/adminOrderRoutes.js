@@ -9,8 +9,8 @@ const router = express.Router();
 router.get("/", protect, admin, async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("user", "name email") // ✅ include customer info
-      .populate("products.product", "name price"); // ✅ include product info
+      .populate("user", "name email")   // ✅ this gets customer info
+      .populate("products.product", "name price");
 
     res.json(orders);
   } catch (err) {
@@ -19,14 +19,12 @@ router.get("/", protect, admin, async (req, res) => {
   }
 });
 
+
 // @route   PUT /api/admin/orders/:id
 // @desc    Update order status (Admin only)
 router.put("/:id", protect, admin, async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
-      .populate("user", "name email") // ✅ ensure response includes user
-      .populate("products.product", "name price"); // ✅ ensure response includes product
-
+    const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     order.status = req.body.status || order.status;

@@ -5,10 +5,10 @@ import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// GET all users (Admin only)
+/// GET all users (Admin only)
 router.get("/", protect, admin, async (req, res) => {
   try {
-    const users = await User.find({}, "name email isAdmin"); 
+    const users = await User.find({}, "name email role");
     res.json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
@@ -16,7 +16,39 @@ router.get("/", protect, admin, async (req, res) => {
   }
 });
 
-// DELETE a user (admin only)
+// ADD a new user (Admin only)
+router.post("/", protect, admin, async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    // check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User with this email already exists" });
+    }
+
+    const newUser = new User({
+      name,
+      email,
+      password,  // 🔑 password should be hashed by your User model's pre-save middleware
+      role: role || "user", // default role = user
+    });
+
+    const savedUser = await newUser.save();
+
+    res.status(201).json({
+      _id: savedUser._id,
+      name: savedUser.name,
+      email: savedUser.email,
+      role: savedUser.role,
+    });
+  } catch (err) {
+    console.error("Error creating user:", err);
+    res.status(500).json({ message: "Error creating user" });
+  }
+});
+
+// DELETE a user (Admin only)
 router.delete("/:id", protect, admin, async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
@@ -26,7 +58,7 @@ router.delete("/:id", protect, admin, async (req, res) => {
   }
 });
 
-// ✅ UPDATE user role (admin only)
+// UPDATE user role (Admin only)
 router.put("/:id", protect, admin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);

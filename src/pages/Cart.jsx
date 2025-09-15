@@ -14,25 +14,35 @@ function Cart() {
 
   const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  const handleCheckout = async () => {
-    if (!user) return alert("Please login first");
+ // frontend/pages/Cart.jsx
+const handleCheckout = async () => {
+  if (!user) return alert("Please login first");
 
-    setLoading(true);
-    try {
-      const orderData = {
-        userId: user._id,
-        products: cart.map(item => ({ product: item.productId, quantity: item.quantity })),
-      };
-      await axios.post("http://localhost:5000/api/orders", orderData);
-      alert("Order placed successfully!");
-      clearCart();
-    } catch (err) {
-      console.error("Checkout error:", err);
-      alert("Something went wrong during checkout.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const orderData = {
+      products: cart.map(item => ({
+        product: item.productId,
+        quantity: item.quantity,
+      })),
+      total: totalPrice,
+    };
+
+    await axios.post("http://localhost:5000/api/orders", orderData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }, // ✅ include token
+    });
+
+    alert("Order placed successfully!");
+    clearCart();
+  } catch (err) {
+    console.error("Checkout error:", err);
+    alert("Something went wrong during checkout.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   if (loading) return <Spinner />;
 
