@@ -1,61 +1,99 @@
-// Navbar.jsx
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import './Navbar.css';
-import userIcon from '../assets/user.png';
-import { useCart } from "../context/CartContext.jsx";
+// frontend/src/components/Navbar.jsx
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import "./Navbar.css";
 import { useAuth } from "../context/authContext.jsx";
-import carticon from '../assets/add-to-cart.png';
+import { useCart } from "../context/CartContext.jsx";
 
-function Navbar() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { cart } = useCart();
+function Navbar({ isAdmin }) {
   const { user, logout } = useAuth();
+  const { cart } = useCart(); // ✅ get cart from context
+  const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
 
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  // ✅ Count cart items
+  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <div className="navbar-logo">QuickBasket</div>
-        <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>☰</div>
-      </div>
+    <nav
+      className={`navbar ${scrolled ? "scrolled" : ""} ${
+        isAdmin ? "admin-navbar" : "user-navbar"
+      }`}
+    >
+      <div className="navbar-container">
+        {/* ✅ Logo */}
+        <Link to="/" className="navbar-logo">
+          QuickBasket
+        </Link>
 
-      <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
-        <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={() => setMenuOpen(false)}>Home</Link>
-        <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''} onClick={() => setMenuOpen(false)}>Contact</Link>
-        <Link to="/about" className={location.pathname === '/about' ? 'active' : ''} onClick={() => setMenuOpen(false)}>About</Link>
-
-        {/* User Account */}
-        <Link to={user ? "/account" : "/login"} className="icon-link" onClick={() => setMenuOpen(false)}>
-          {user ? (
-            <div className="user-badge">
-              <img src={userIcon} alt="User" style={{ width: '28px', marginRight: '8px', borderRadius: '50%' }} />
-              <span>{user.name}</span>
-            </div>
+        {/* ✅ Links */}
+        <ul className="navbar-links">
+          {!isAdmin ? (
+            <>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/about">About</Link>
+              </li>
+              <li>
+                <Link to="/contact">Contact</Link>
+              </li>
+              <li>
+                <Link to="/account">Account</Link>
+              </li>
+              <li>
+                <Link to="/cart" className="cart-link">
+                  Cart
+                  {cartCount > 0 && (
+                    <span className="cart-badge">{cartCount}</span>
+                  )}
+                </Link>
+              </li>
+            </>
           ) : (
-            <img src={userIcon} alt="Login" style={{ width: '28px' }} />
+            <>
+              <li>
+                <Link to="/admin/dashboard">Dashboard</Link>
+              </li>
+              <li>
+                <Link to="/admin/products">Products</Link>
+              </li>
+              <li>
+                <Link to="/admin/orders">Orders</Link>
+              </li>
+              <li>
+                <Link to="/admin/users">Users</Link>
+              </li>
+            </>
           )}
-        </Link>
 
-        {user && (
-          <span className="logout-btn" onClick={handleLogout} style={{ cursor: 'pointer', marginLeft: '10px' }}>
-            Logout
-          </span>
-        )}
-
-        {/* Cart */}
-        <Link to="/cart" className="cart-link" onClick={() => setMenuOpen(false)} style={{ position: "relative" }}>
-          <img src={carticon} alt="Cart Icon" style={{ width: '28px', verticalAlign: 'middle' }} />
-          {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
-        </Link>
+          {/* ✅ Auth buttons */}
+          {user ? (
+            <li>
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </li>
+          ) : (
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+          )}
+        </ul>
       </div>
     </nav>
   );
