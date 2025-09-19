@@ -1,3 +1,4 @@
+// backend/routes/adminOrderRoutes.js
 import express from "express";
 import Order from "../models/Order.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -9,7 +10,7 @@ const router = express.Router();
 router.get("/", protect, admin, async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("user", "name email")   // ✅ this gets customer info
+      .populate("user", "name email")     // ✅ get customer details
       .populate("products.product", "name price");
 
     res.json(orders);
@@ -18,7 +19,6 @@ router.get("/", protect, admin, async (req, res) => {
     res.status(500).json({ message: "Error fetching orders" });
   }
 });
-
 
 // @route   PUT /api/admin/orders/:id
 // @desc    Update order status (Admin only)

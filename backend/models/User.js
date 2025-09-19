@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Embedded cart item schema stored on each User
 const cartItemSchema = new mongoose.Schema({
-  productId: { type: String, required: true },   // keep as string since FE uses product.id
+  productId: { type: String, required: true },
   name: { type: String, required: true },
   price: { type: Number, required: true },
   quantity: { type: Number, required: true, default: 1 },
-  image: { type: String, required: false },
+  image: { type: String },
 });
 
 const userSchema = new mongoose.Schema(
@@ -17,12 +16,12 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: [true, "Please add an email"], unique: true },
     password: { type: String, required: [true, "Please add a password"], minlength: 6 },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    cart: [cartItemSchema], // ← persistent cart
+    cart: [cartItemSchema],
   },
   { timestamps: true }
 );
 
-// hash on save
+// hash password
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
@@ -38,9 +37,10 @@ userSchema.methods.generateToken = function () {
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET not defined");
   }
-  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
 };
 
 const User = mongoose.model("User", userSchema);
 export default User;
-

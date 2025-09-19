@@ -1,15 +1,17 @@
-// frontend/src/components/Navbar.jsx
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./Navbar.css";
 import { useAuth } from "../context/authContext.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
-function Navbar({ isAdmin }) {
+function Navbar() {
   const { user, logout } = useAuth();
-  const { cart } = useCart(); // ✅ get cart from context
+  const { cart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ get current path
   const [scrolled, setScrolled] = useState(false);
+
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +26,10 @@ function Navbar({ isAdmin }) {
     navigate("/login");
   };
 
-  // ✅ Count cart items
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  // ✅ Function to determine if a link is active
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav
@@ -34,54 +38,92 @@ function Navbar({ isAdmin }) {
       }`}
     >
       <div className="navbar-container">
-        {/* ✅ Logo */}
         <Link to="/" className="navbar-logo">
           QuickBasket
         </Link>
 
-        {/* ✅ Links */}
         <ul className="navbar-links">
           {!isAdmin ? (
             <>
               <li>
-                <Link to="/">Home</Link>
+                <Link
+                  to="/"
+                  className={isActive("/") ? "active-link" : ""}
+                >
+                  Home
+                </Link>
               </li>
               <li>
-                <Link to="/about">About</Link>
+                <Link
+                  to="/about"
+                  className={isActive("/about") ? "active-link" : ""}
+                >
+                  About
+                </Link>
               </li>
               <li>
-                <Link to="/contact">Contact</Link>
+                <Link
+                  to="/contact"
+                  className={isActive("/contact") ? "active-link" : ""}
+                >
+                  Contact
+                </Link>
               </li>
               <li>
-                <Link to="/account">Account</Link>
+                <Link
+                  to="/account"
+                  className={isActive("/account") ? "active-link" : ""}
+                >
+                  Account
+                </Link>
               </li>
               <li>
-                <Link to="/cart" className="cart-link">
+                <Link
+                  to="/cart"
+                  className={`cart-link ${isActive("/cart") ? "active-link" : ""}`}
+                >
                   Cart
-                  {cartCount > 0 && (
-                    <span className="cart-badge">{cartCount}</span>
-                  )}
+                  {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                 </Link>
               </li>
             </>
           ) : (
             <>
               <li>
-                <Link to="/admin/dashboard">Dashboard</Link>
+                <Link
+                  to="/admin/dashboard"
+                  className={isActive("/admin/dashboard") ? "active-link" : ""}
+                >
+                  Dashboard
+                </Link>
               </li>
               <li>
-                <Link to="/admin/products">Products</Link>
+                <Link
+                  to="/admin/products"
+                  className={isActive("/admin/products") ? "active-link" : ""}
+                >
+                  Products
+                </Link>
               </li>
               <li>
-                <Link to="/admin/orders">Orders</Link>
+                <Link
+                  to="/admin/orders"
+                  className={isActive("/admin/orders") ? "active-link" : ""}
+                >
+                  Orders
+                </Link>
               </li>
               <li>
-                <Link to="/admin/users">Users</Link>
+                <Link
+                  to="/admin/users"
+                  className={isActive("/admin/users") ? "active-link" : ""}
+                >
+                  Users
+                </Link>
               </li>
             </>
           )}
 
-          {/* ✅ Auth buttons */}
           {user ? (
             <li>
               <button className="logout-btn" onClick={handleLogout}>
@@ -90,7 +132,9 @@ function Navbar({ isAdmin }) {
             </li>
           ) : (
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login" className={isActive("/login") ? "active-link" : ""}>
+                Login
+              </Link>
             </li>
           )}
         </ul>

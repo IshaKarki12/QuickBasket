@@ -1,6 +1,7 @@
+// backend/routes/orderRoutes.js
 import express from "express";
 import Order from "../models/Order.js";
-import Product from "../models/product.js";
+import Product from "../models/Product.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -9,7 +10,7 @@ const router = express.Router();
 // @desc    Create new order (Logged-in users only)
 router.post("/", protect, async (req, res) => {
   try {
-    const { products } = req.body; // ✅ no need for userId, we get it from req.user
+    const { products } = req.body;
 
     if (!products || products.length === 0) {
       return res.status(400).json({ message: "No products in order" });
@@ -29,15 +30,14 @@ router.post("/", protect, async (req, res) => {
     }
 
     const newOrder = new Order({
-  user: req.user._id,  // ✅ comes from middleware
-  products: orderItems,
-  total,
-  status: "Pending",
-});
+      user: req.user._id, // ✅ logged-in user
+      products: orderItems,
+      total,
+      status: "Pending",
+    });
 
     const savedOrder = await newOrder.save();
 
-    // return populated order
     const populatedOrder = await savedOrder.populate([
       { path: "user", select: "name email" },
       { path: "products.product", select: "name price" },
