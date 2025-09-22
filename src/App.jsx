@@ -52,6 +52,7 @@ function AppContent() {
   );
 }
 
+// ✅ Main App
 function App() {
   return (
     <AuthProvider>
@@ -62,7 +63,7 @@ function App() {
             <AppContent />
           </div>
           <ScrollToTopButton />
-          <Footer />
+          <ConditionalFooter /> {/* footer handled conditionally */}
         </Router>
       </CartProvider>
     </AuthProvider>
@@ -79,6 +80,18 @@ function ConditionalNavbar() {
   }
 
   return <Navbar />;
+}
+
+// ✅ Conditional Footer
+function ConditionalFooter() {
+  const location = useLocation();
+  const hideFooterPaths = ["/login", "/register"]; // paths where footer should be hidden
+
+  if (hideFooterPaths.includes(location.pathname)) {
+    return null; // don't render footer
+  }
+
+  return <Footer />;
 }
 
 export default App;
