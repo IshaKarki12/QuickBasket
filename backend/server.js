@@ -12,6 +12,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminUserRoutes from "./routes/adminUserRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => res.send("Backend server is running 🚀"));
 

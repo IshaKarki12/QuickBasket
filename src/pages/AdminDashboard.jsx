@@ -73,6 +73,9 @@ function AdminDashboard() {
         <Link to="/admin/users">
           <button className="users-btn">Manage Users</button>
         </Link>
+        <Link to="/admin/contacts">
+  <button className="contacts-btn">Manage Contacts</button>
+</Link>
       </div>
     </div>
   );

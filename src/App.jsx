@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProductManagement from "./pages/ProductManagement";
 import OrderManagementPage from "./pages/OrderManagementPage";
 import UserManagementPage from "./pages/UserManagementPage.jsx";
+import ContactManagement from "./pages/ContactManagement.jsx"; 
 
 // Wrapper for routes and admin redirect
 function AppContent() {
@@ -48,6 +49,7 @@ function AppContent() {
       <Route path="/admin/products" element={<ProductManagement />} />
       <Route path="/admin/orders" element={<OrderManagementPage />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
+      <Route path="/admin/contacts" element={<ContactManagement />} />
     </Routes>
   );
 }

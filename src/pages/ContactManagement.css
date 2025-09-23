@@ -1,0 +1,62 @@
+.contact-management-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact-management-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.contact-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.contact-table th,
+.contact-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.contact-table th {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.contact-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.contact-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
