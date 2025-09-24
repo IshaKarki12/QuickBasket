@@ -1,76 +1,65 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "./ContactManagement.css";
 
 function ContactManagement() {
-  const [contacts, setContacts] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  // Fetch contacts
   useEffect(() => {
-    const fetchContacts = async () => {
+    const fetchMessages = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/contacts", {
+        const { data } = await axios.get("http://localhost:5000/api/contacts", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        setContacts(res.data);
+        setMessages(data);
       } catch (err) {
-        console.error(err);
-        setError("Failed to load contacts.");
+        console.error("Error fetching contacts:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchContacts();
+    fetchMessages();
   }, []);
 
-  // Delete message
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this message?")) return;
+  const deleteMessage = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/contacts/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      setContacts(contacts.filter((msg) => msg._id !== id));
+      setMessages((prev) => prev.filter((msg) => msg._id !== id));
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete message.");
+      console.error("Error deleting message:", err);
     }
   };
 
-  if (loading) return <p>Loading contacts...</p>;
-  if (error) return <p className="error-text">{error}</p>;
+  if (loading) return <p>Loading messages...</p>;
 
   return (
     <div className="contact-management-container">
-      <h1>Contact Messages</h1>
-
-      {contacts.length === 0 ? (
+      <h2>Contact Messages</h2>
+      {messages.length === 0 ? (
         <p>No messages found.</p>
       ) : (
-        <table className="contact-table">
+        <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Email</th>
               <th>Message</th>
-              <th>Date</th>
+              <th>Received At</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {contacts.map((msg) => (
+            {messages.map((msg) => (
               <tr key={msg._id}>
                 <td>{msg.name}</td>
                 <td>{msg.email}</td>
                 <td>{msg.message}</td>
                 <td>{new Date(msg.createdAt).toLocaleString()}</td>
                 <td>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(msg._id)}
-                  >
+                  <button className="delete-btn" onClick={() => deleteMessage(msg._id)}>
                     Delete
                   </button>
                 </td>
